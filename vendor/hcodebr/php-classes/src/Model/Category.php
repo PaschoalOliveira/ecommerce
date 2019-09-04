@@ -71,6 +71,47 @@ class Category extends Model{
 		file_put_contents($location, implode('',$html));
 	}
 
+	public function getProducts($related = true)
+	{
+		$sql = new Sql();
+
+		if ($related == true) 
+		{
+			return $sql->select("SELECT * FROM tb_products WHERE idproduct IN (SELECT produto.idproduct FROM TB_PRODUCTS produto INNER JOIN tb_productscategories produtocategoria ON produto.idproduct = produtocategoria.idproduct WHERE idcategory = :idcategory);",
+			[
+				':idcategory'=>$this->getidcategory()
+			]);
+
+		}else{
+			return $sql->select("SELECT * FROM tb_products WHERE idproduct NOT IN (SELECT produto.idproduct FROM TB_PRODUCTS produto INNER JOIN tb_productscategories produtocategoria ON produto.idproduct = produtocategoria.idproduct WHERE idcategory = :idcategory);",
+			[
+				':idcategory'=>$this->getidcategory()
+			]);
+		}
+	}
+
+	public function addProduct(Product $product){
+
+		$sql = new Sql();
+
+		$sql->query("INSERT INTO tb_productscategories (idcategory,idproduct) values(:idcategory,:idproduct)",[
+			':idcategory'=>$this->getidcategory(),
+			':idproduct'=>$product->getidproduct()
+		]);
+
+	}
+
+public function removeProduct(Product $product){
+
+		$sql = new Sql();
+
+		$sql->query("DELETE FROM tb_productscategories WHERE idcategory = :idcategory and idproduct =:idproduct;",[
+			':idcategory'=>$this->getidcategory(),
+			':idproduct'=>$product->getidproduct()
+		]);
+
+	}
+
 }
 
 ?>
