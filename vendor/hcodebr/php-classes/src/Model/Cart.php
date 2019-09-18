@@ -295,18 +295,12 @@ class Cart extends Model{
 	{
 
 		$_SESSION[Cart::SESSION_ERROR] = $msg;
-
-		//var_dump($_SESSION[Cart::SESSION_ERROR]);
-		//exit;
 	}
 
 	public static function getMsgError()
 	{
 
-		//var_dump($_SESSION[Cart::SESSION_ERROR]);
-		//exit;
-
-		$msg = isset($_SESSION[Cart::SESSION_ERROR]) ? $_SESSION[Cart::SESSION_ERROR] : "";
+		$msg = (isset($_SESSION[Cart::SESSION_ERROR]) && $_SESSION[Cart::SESSION_ERROR]) ? $_SESSION[Cart::SESSION_ERROR] : "";
 
 		Cart::clearMsgError();
 		return $msg;
