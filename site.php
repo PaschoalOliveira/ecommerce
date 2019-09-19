@@ -73,6 +73,16 @@ $app->get("/cart", function(){
 	//var_dump($cart->getValues());
 	//exit;
 
+	$freight = $cart->getvlfreight();
+
+	if((!isset($freight)) || $freight === NULL || $freight == "")
+	{
+		$cart->setvlfreight("0.0");
+	}
+
+	//var_dump($cart->getvlfreight() . "/" . $cart->getvlsubtotal());
+	//exit;
+
 	$page->setTpl("cart",
 	[
 		'cart'=>$cart->getValues(),
@@ -169,8 +179,16 @@ $app->get("/checkout", function(){
 $app->get("/login", function(){
 
 	$page = new Page();
+
+	$registerValues = isset($_SESSION['registervalues']) ? $_SESSION['registervalues'] : ['name'=>'', 'email'=>'','phone'=>''];
+
+	//var_dump($registerValues);
+	//exit;
+
 	$page->setTpl("login",[
-		'error'=>User::getMsgError()
+		'error'=>User::getMsgError(),
+		'errorRegister'=>User::getErrorRegister(),
+		'registerValues'=>$registerValues
 	]);
 
 });
@@ -195,6 +213,58 @@ $app->get("/logout", function(){
 
 
 	header("Location: /login");
+	exit;
+
+});
+
+$app->post("/register", function(){
+
+	$_SESSION['registervalues'] = $_POST;
+
+	if(!isset($_POST['name']) || $_POST['name'] == ''){
+
+		User::setErrorRegister("Preencha o seu nome.");
+		header("Location: /login");
+		exit;
+	}
+
+	if(!isset($_POST['email']) || $_POST['email'] == ''){
+
+		User::setErrorRegister("Preencha o seu email.");
+		header("Location: /login");
+		exit;
+	}
+
+	if(!isset($_POST['password']) || $_POST['password'] == ''){
+
+		User::setErrorRegister("Preencha o password.");
+		header("Location: /login");
+		exit;
+	}
+
+	if(User::checkLoginExist($_POST['email']) === true)
+	{
+		User::setErrorRegister("Este endereço de email está sendo utilizado por outro usuário.");
+		header("Location: /login");
+		exit;
+	}
+
+	$user = new User();
+	$user->setData([
+		'inadmin'=>0,
+		'deslogin'=>$_POST['email'],
+		'desperson'=>$_POST['name'],
+		'desemail'=>$_POST['email'],
+		'despassword'=>$_POST['password'],
+		'nrphone'=>$_POST['phone'],
+
+	]);
+
+	$user->save();
+
+	User::login($_POST['email'], $_POST['password']);
+
+	header('Location: /checkout');
 	exit;
 
 });

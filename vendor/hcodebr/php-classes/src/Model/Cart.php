@@ -187,7 +187,6 @@ class Cart extends Model{
 
 	public function setFreight($nrzipcode)
 	{
-
 		$nrzipcode = str_replace('-','',$nrzipcode);
 
 		$totals = $this->getProductsTotals();

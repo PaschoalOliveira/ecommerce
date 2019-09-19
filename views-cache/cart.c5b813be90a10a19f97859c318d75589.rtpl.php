@@ -101,13 +101,22 @@
                                         <tbody>
                                             <tr class="cart-subtotal">
                                                 <th>Subtotal</th>
-                                                <td><span class="amount">R$<?php echo formatPrice($cart["vlsubtotal"]); ?></span></td>
+                                                <td><span class="amount">
+                                                <?php if( $cart["vlsubtotal"] >= 0 ){ ?>
+
+                                                    R$<?php echo formatPrice($cart["vlsubtotal"]); ?></span></td>
+                                                <?php } ?>
+
                                             </tr>
 
                                             <tr class="shipping">
                                                 <th>Frete</th>
                                                 <td>
+                                                    <?php if( $cart["vlfreight"] >= 0 ){ ?>
+
                                                     R$<?php echo formatPrice($cart["vlfreight"]); ?> 
+                                                    <?php } ?>
+
                                                     <?php if( $cart["nrdays"] > 0 ){ ?>
 
                                                         <small>prazo de <?php echo htmlspecialchars( $cart["nrdays"], ENT_COMPAT, 'UTF-8', FALSE ); ?> dia(s)</small>
