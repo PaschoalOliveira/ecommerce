@@ -214,6 +214,12 @@ class Cart extends Model{
 				$totals['vllength'] = 16;
 		}
 
+		//var_dump($totals['vlweight']);
+
+		if($totals['vlweight'] > 10){
+			$totals['vlweight'] = 2;
+		}
+
 		//ATENÇÃO!!!!!!!!!!!!! - Teste para dar erro. 
 		//$totals['vllength'] = 200;
 
