@@ -20,14 +20,6 @@ class Order extends Model{
 			":vltotal"=>$this->getvltotal()
 			]);
 
-		/*
-		var_dump($this->getidcart());
-		var_dump($this->getiduser());
-		var_dump($this->getidstatus());
-		var_dump($this->getidaddress());
-	    var_dump($this->getvltotal());
-		exit();
-		*/
 		if(count($results) > 0)
 		{
 			$this->setData($results[0]);
@@ -37,8 +29,8 @@ class Order extends Model{
 
 	public function get($idorder)
 	{
-			$sql = new Sql();
-			$results = $sql->select("SELECT * FROM tb_orders a 
+		$sql = new Sql();
+		$results = $sql->select("SELECT * FROM tb_orders a 
 				INNER JOIN tb_ordersstatus b USING(idstatus) 
 				INNER JOIN tb_carts c USING(idcart)
 				INNER JOIN tb_users d ON d.iduser = a.iduser
