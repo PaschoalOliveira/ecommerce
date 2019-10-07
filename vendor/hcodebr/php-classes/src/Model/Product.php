@@ -13,7 +13,7 @@ class Product extends Model{
 	{
 		$sql = new Sql();
 
-		$results = $sql->select("SELECT * FROM  tb_products user ORDER BY desproduct") ;
+		$results = $sql->select("SELECT * FROM  tb_products products ORDER BY desproduct") ;
 
 		return $results;
 	}
@@ -157,6 +157,51 @@ class Product extends Model{
 			ON a.idcategory = b.idcategory WHERE b.idproduct=:idproduct;",[
 				':idproduct'=>$this->getidproduct()
 			]);
+	}
+
+	public static function getPage($page = 1, $itensPerPage = 5)
+	{
+		$start = ($page-1) * $itensPerPage;
+
+		$sql = new Sql();
+
+		$results = $sql->select("SELECT SQL_CALC_FOUND_ROWS * 
+			FROM  tb_products product ORDER BY desproduct
+			limit $start,$itensPerPage;",
+		);
+
+		$resultTotal = $sql->select("SELECT FOUND_ROWS() as nrtotal;");
+
+		return [
+			'data'=>$results,
+			'total'=>(int)$resultTotal[0]['nrtotal'],
+			'pages'=>ceil($resultTotal[0]['nrtotal'] / $itensPerPage)
+		];
+	}
+
+	public static function getPageSearch($search, $page = 1, $itensPerPage = 5)
+	{
+		$start = ($page-1) * $itensPerPage;
+
+		$sql = new Sql();
+
+		$results = $sql->select("SELECT SQL_CALC_FOUND_ROWS * 
+			FROM  tb_products product
+			WHERE product.desproduct LIKE :search
+			OR product.desurl LIKE :search
+			ORDER BY desproduct
+			limit $start,$itensPerPage;",[
+				":search"=>"%" . $search . "%"
+			]
+		);
+
+		$resultTotal = $sql->select("SELECT FOUND_ROWS() as nrtotal;");
+
+		return [
+			'data'=>$results,
+			'total'=>(int)$resultTotal[0]['nrtotal'],
+			'pages'=>ceil($resultTotal[0]['nrtotal'] / $itensPerPage)
+		];
 	}
 
 }

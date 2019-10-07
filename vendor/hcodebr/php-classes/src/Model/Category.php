@@ -120,7 +120,7 @@ class Category extends Model{
 
 	}
 
-		public static function getPage($page = 1, $itensPerPage = 5)
+	public static function getPage($page = 1, $itensPerPage = 5)
 	{
 		$start = ($page-1) * $itensPerPage;
 
