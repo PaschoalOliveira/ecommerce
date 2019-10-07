@@ -170,10 +170,11 @@ $app->get("/checkout", function(){
 
 	$address = new Address();
 
-	if(isset($_GET['zipcode']))
+	if(!isset($_GET['zipcode']))
 	{
 		$_GET['zipcode'] = $cart->getdeszipcode();
 	}
+
 
 	if(isset($_GET['zipcode']))
 	{
@@ -204,7 +205,6 @@ $app->get("/checkout", function(){
 $app->post("/checkout", function(){
 
 	User::verifyLogin(false);
-
 
 	if(!isset($_POST['zipcode']) || $_POST['zipcode'] === '')
 	{
@@ -246,7 +246,7 @@ $app->post("/checkout", function(){
 		Address::setMsgError("Informe o País.");
 		header('Location: /checkout');
 		exit;
-	}		
+	}	
 
 
 	$user = User::getFromSession();
