@@ -271,7 +271,7 @@ class User extends Model{
 			));
 	}
 
-	public static function setPassword($password)
+	public function setPassword($password)
 	{
 		$sql = new Sql();
 
