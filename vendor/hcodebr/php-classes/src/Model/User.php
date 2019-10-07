@@ -425,8 +425,6 @@ class User extends Model{
 			'total'=>(int)$resultTotal[0]['nrtotal'],
 			'pages'=>ceil($resultTotal[0]['nrtotal'] / $itensPerPage)
 		];
-
-
 	}
 
 }
