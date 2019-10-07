@@ -122,6 +122,64 @@ class Order extends Model{
 		$_SESSION[Order::SUCCESS] = NULL;	
 	}
 
+public static function getPage($page = 1, $itensPerPage = 5)
+	{
+		$start = ($page-1) * $itensPerPage;
+
+		$sql = new Sql();
+
+		$results = $sql->select("SELECT SQL_CALC_FOUND_ROWS * 
+				FROM tb_orders a 
+				INNER JOIN tb_ordersstatus b USING(idstatus) 
+				INNER JOIN tb_carts c USING(idcart)
+				INNER JOIN tb_users d ON d.iduser = a.iduser
+				INNER JOIN tb_addresses e USING(idaddress)
+				INNER JOIN tb_persons f on f.idperson = d.idperson
+				ORDER by a.dtregister DESC
+				limit $start,$itensPerPage;",
+		);
+
+		$resultTotal = $sql->select("SELECT FOUND_ROWS() as nrtotal;");
+
+		return [
+			'data'=>$results,
+			'total'=>(int)$resultTotal[0]['nrtotal'],
+			'pages'=>ceil($resultTotal[0]['nrtotal'] / $itensPerPage)
+		];
+	}
+
+	public static function getPageSearch($search, $page = 1, $itensPerPage = 5)
+	{
+		$start = ($page-1) * $itensPerPage;
+
+		$sql = new Sql();
+
+		$results = $sql->select("SELECT SQL_CALC_FOUND_ROWS * 
+				FROM tb_orders a 
+				INNER JOIN tb_ordersstatus b USING(idstatus) 
+				INNER JOIN tb_carts c USING(idcart)
+				INNER JOIN tb_users d ON d.iduser = a.iduser
+				INNER JOIN tb_addresses e USING(idaddress)
+				INNER JOIN tb_persons f on f.idperson = d.idperson
+				WHERE f.desperson LIKE :search
+				OR e.desaddress LIKE :search
+				OR a.idorder = :id
+				ORDER by a.dtregister DESC
+				limit $start,$itensPerPage;",[
+				":search"=>"%" . $search . "%",
+				":id"=>$search
+			]
+		);
+
+		$resultTotal = $sql->select("SELECT FOUND_ROWS() as nrtotal;");
+
+		return [
+			'data'=>$results,
+			'total'=>(int)$resultTotal[0]['nrtotal'],
+			'pages'=>ceil($resultTotal[0]['nrtotal'] / $itensPerPage)
+		];
+	}	
+
 }
 
 ?>
