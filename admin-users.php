@@ -81,15 +81,43 @@ $app->post("/admin/users/:iduser", function($iduser){
 
 });
 
-$app->get("/admin/users/", function(){
+$app->get("/admin/users", function(){
 
 	User::verifyLogin();
 
-	$users = User::listAll();
+	$search = (isset($_GET['search'])) ? $_GET['search'] : "";
+	$page = (isset($_GET['page'])) ?  (int)$_GET['page'] : 1;
+
+	if($search != "")
+	{
+		$paginacao = User::getPageSearch($search, $page);
+
+	}else{
+
+		$paginacao = User::getPage($page);
+	}
+
+	$pages = [];
+
+	for($x=0; $x < $paginacao['pages'];$x++)
+	{
+		array_push($pages,[
+			'href'=>'/admin/users?'. http_build_query([
+				'page'=>$x + 1,
+				'search'=>$search 
+			]),
+			'text'=>$x + 1
+		]);
+	}
 
 	$page = new PageAdmin();
 
-	$page->setTpl("users",array("users"=>$users));
+	$page->setTpl("users",array(
+		"users"=>$paginacao['data'],
+		"search"=>$search,
+		"pages"=>$pages
+	));
 
 });
+
 ?>
