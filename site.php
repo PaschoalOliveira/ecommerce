@@ -279,8 +279,35 @@ $app->post("/checkout", function(){
 	//var_dump("idorder: " . $order->getidorder());
 	//exit();
 
-	header("Location: /order/" .$order->getidorder());
+	header("Location: /order/" .$order->getidorder(). "/pagseguro");
 	exit;
+});
+
+$app->get("/order/:idorder/pagseguro",function($idorder){
+
+	User::verifyLogin(false);
+
+	$order = new Order();
+
+	$order->get((int)$idorder);
+	$cart = $order->getCart();
+
+	$page = new Page(
+	[
+		'header'=>false,
+		'footer'=>false
+	]);
+
+	$page->setTpl("payment-pagseguro",
+	[
+		'order'=>$order->getValues(),
+		'cart'=>$order->getValues(),
+		'products'=>$cart->getProducts(),
+		'phone'=>[
+			'areaCode'=>substr($order->gertnrphone(),0,2),
+			'number'=>substr($order->getnrphone(),2,strlen($order->getnrphone()))
+		]
+	]);
 
 });
 
